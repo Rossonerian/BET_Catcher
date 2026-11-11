@@ -11,7 +11,7 @@ if grep -RInE '(api[_-]?key|secret|password|token)\s*[:=]\s*["'"'"'][A-Za-z0-9_\
   echo "Possible secret found"; exit 1
 fi
 if [ -f "$ROOT/frontend/package.json" ]; then
-  echo "== frontend: install, typecheck, build"
-  (cd "$ROOT/frontend" && npm ci --no-audit --no-fund && npm run typecheck && npm run build)
+  echo "== frontend: install, typecheck, test, build"
+  (cd "$ROOT/frontend" && npm ci --no-audit --no-fund && npm run typecheck && npm test && npm run build)
 fi
 echo "CI OK"
