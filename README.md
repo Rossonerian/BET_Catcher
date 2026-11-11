@@ -27,7 +27,8 @@ The SQLite database (`backend/verity.db`, override with `VERITY_DB`) is seeded o
 ## Development
 ```bash
 pip install -r backend/requirements-dev.txt
-cd backend && python3 -m pytest -q                       # engines, API contract, end-to-end journey
+cd backend && python3 -m pytest -q                       # engines, API contract, end-to-end journey, Vercel entrypoint
+cd frontend && npm test                                  # Vitest + Testing Library component tests
 cd frontend && npm run dev                               # Vite on :5173, proxies /api to :8000
 scripts/ci_local.sh                                      # everything CI runs
 scripts/record_fixtures.sh                               # re-record docs/contracts/fixtures after API changes
@@ -42,6 +43,8 @@ frontend/                  React + Vite + TypeScript investigator console
 docs/                      source of truth, decisions, risks, contracts, architecture, execution, testing, demo
 reports/                   final engineering audit
 scripts/                   run_demo, ci_local, record_fixtures
+api/index.py, vercel.json  Vercel hosting entrypoint and routing (DEC-015)
+.github/workflows/         ci (tests, build, secrets scan), deploy (Vercel, needs VERCEL_TOKEN)
 ```
 
 ## What is real vs demo-only
@@ -50,7 +53,7 @@ scripts/                   run_demo, ci_local, record_fixtures
 | All six engines, residual analysis, scoring, tiers, caps | Data is synthetic; thresholds are demo-calibrated |
 | Declaration → review → re-assessment loop, cases, append-only audit | `declaration-template` endpoint pre-fills from seeded records |
 | Inline per-transaction indicators with measured latency | Latency is measured on the demo host, **not on IBM Telum** |
-| Single-process deployment | No auth, no real LinuxONE / Secure Execution deployment |
+| Single-process deployment; hosted demo on Vercel with ephemeral per-instance state | No auth, no real LinuxONE / Secure Execution deployment |
 
 ## Why IBM Z / LinuxONE (production path, proposed)
 In-transaction scoring next to the acquiring ledger on the Telum on-chip AI accelerator (model → ONNX → IBM zDLC); peer and network analysis over sensitive merchant data inside IBM Secure Execution enclaves; pervasive encryption for the audit trail; and enclave-based cross-provider signals as a future extension. See SoT §D.

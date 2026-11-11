@@ -8,7 +8,9 @@ Acceptance criteria: [../PROJECT_SOURCE_OF_TRUTH.md](../PROJECT_SOURCE_OF_TRUTH.
 | Engine behaviour | SoT §F conditions 1–5; missing data never raises risk; pending declarations change nothing; small cohorts refuse comparison; shared long-standing supplier is not a lead | `backend/tests/test_engines.py` | CI |
 | API contract | Shapes of list/assessment/timeseries/network; error codes 404/409/422; append-only audit; inline latency p95 < 5 ms in-process | `backend/tests/test_api.py` | CI |
 | End-to-end | Full storyline over HTTP: template → submit → pending unchanged → approve → 65/ANALYST_REVIEW → case decision → audit → reset | `backend/tests/test_e2e.py` | CI |
-| Frontend | `tsc --noEmit`, `vite build` | `frontend/` | CI |
+| Frontend | `tsc --noEmit`; Vitest + Testing Library: format helpers and SignalsPanel, RecommendationPanel, MerchantHeader, NetworkPanel, `<App/>` rendered against recorded contract fixtures; `vite build` | `frontend/tests/` (`npm test`) | CI |
+| Hosting entrypoint | `api/index.py` seeds and serves `/api/*`; `vercel.json` routes | `backend/tests/test_vercel_entry.py` | CI |
+| Hosted smoke | `/api/health` on https://bet-catcher.vercel.app after deploy | `.github/workflows/deploy.yml` | Post-deploy |
 | Manual demo | Runbook walk-through in a browser | `docs/demo/DEMO_RUNBOOK.md` | Before delivery |
 | Secrets | grep for hard-coded secrets | `scripts/ci_local.sh`, workflow `secrets` job | CI |
 
