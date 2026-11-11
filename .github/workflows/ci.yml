@@ -1,0 +1,32 @@
+name: ci
+on:
+  pull_request:
+    branches: [main, "integration/**"]
+  push:
+    branches: [main, "integration/**"]
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r backend/requirements-dev.txt
+      - run: python -m compileall -q backend/verity
+      - run: cd backend && python -m pytest -q
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - run: cd frontend && npm ci && npm run typecheck && npm run build
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: grep for hard-coded secrets
+        run: |
+          ! grep -RInE '(api[_-]?key|secret|password|token)\s*[:=]\s*["'"'"'][A-Za-z0-9_\-]{12,}' \
+            --include='*.py' --include='*.ts' --include='*.tsx' --include='*.json' --include='*.yml' \
+            --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=fixtures .
