@@ -127,6 +127,86 @@ def accounted_mask(md: MerchantData) -> tuple[np.ndarray, dict[str, np.ndarray]]
     return mask, per_decl
 
 
+def preview_declaration_match(md: MerchantData, decl: dict) -> dict:
+    """Pre-evaluates transactions matching a declaration and detects potential whitewashing (AUD-001)."""
+    change_type = decl.get("change_type")
+    p = decl.get("params", {})
+    eff_day = decl.get("effective_from_day")
+    if eff_day is None and "effective_from" in decl:
+        from .. import seed
+        d_val = decl["effective_from"]
+        if isinstance(d_val, str):
+            from datetime import date
+            d_val = date.fromisoformat(d_val)
+        eff_day = (d_val - seed.START_DATE).days
+
+    eff_day = int(eff_day) if eff_day is not None else 0
+
+    if change_type in ("CATERING", "BULK_ORDERS"):
+        cps = set(p.get("counterparties", []))
+        lo = float(p.get("ticket_min", 0) if p.get("ticket_min") is not None else 0)
+        hi = float(p.get("ticket_max", 1e12) if p.get("ticket_max") is not None else 1e12)
+        open_h = int(p.get("hours_open", md.merchant["declared_open"] or 0) if p.get("hours_open") is not None else 0)
+        close_h = int(p.get("hours_close", md.merchant["declared_close"] or 24) if p.get("hours_close") is not None else 24)
+        m = (
+            np.isin(md.customer, list(cps))
+            & (md.amount >= lo) & (md.amount <= hi)
+            & in_hours(md.hour, open_h, close_h)
+            & (md.day >= eff_day)
+            & ~md.is_refund
+        )
+    elif change_type == "EXTENDED_HOURS":
+        new_close = p.get("new_close")
+        if new_close is not None and md.merchant["declared_close"] is not None:
+            m = (
+                in_hours(md.hour, md.merchant["declared_close"], int(new_close))
+                & (md.day >= eff_day)
+                & ~md.is_refund
+            )
+        else:
+            m = np.zeros(len(md.amount), dtype=bool)
+    else:
+        m = np.zeros(len(md.amount), dtype=bool)
+
+    matched_count = int(np.sum(m))
+    matched_amount = float(np.sum(md.amount[m])) if matched_count > 0 else 0.0
+
+    outside_hours_count = 0
+    if md.merchant["declared_open"] is not None and md.merchant["declared_close"] is not None:
+        outside_hours_mask = m & ~in_hours(md.hour, md.merchant["declared_open"], md.merchant["declared_close"])
+        outside_hours_count = int(np.sum(outside_hours_mask))
+
+    all_sales_cust = md.customer[~md.is_refund]
+    u_cust, counts = np.unique(all_sales_cust, return_counts=True)
+    one_time_set = set(u_cust[counts == 1])
+    one_time_count = int(np.sum(m & np.isin(md.customer, list(one_time_set))))
+
+    recent_sales = md.amount[(md.day >= config.RECENT_START) & ~md.is_refund]
+    u_amt, u_cnt = np.unique(recent_sales[recent_sales >= config.REPEATED_AMOUNT_MIN], return_counts=True)
+    rep_high_set = set(u_amt[u_cnt >= config.REPEATED_AMOUNT_COUNT])
+    rep_high_count = int(np.sum(m & np.isin(md.amount, list(rep_high_set))))
+
+    warnings = []
+    if outside_hours_count > 0:
+        warnings.append(
+            f"Matches {outside_hours_count} transaction(s) outside declared operating hours "
+            f"({md.merchant['declared_open']:02d}:00–{md.merchant['declared_close']:02d}:00)"
+        )
+    if one_time_count > 0:
+        warnings.append(f"Matches {one_time_count} transaction(s) from one-time/walk-in customer IDs")
+    if rep_high_count > 0:
+        warnings.append(f"Matches {rep_high_count} transaction(s) with repeated identical high amounts")
+
+    return {
+        "matched_count": matched_count,
+        "matched_amount": round(matched_amount, 2),
+        "outside_declared_hours_count": outside_hours_count,
+        "one_time_customer_count": one_time_count,
+        "repeated_high_amount_count": rep_high_count,
+        "warnings": warnings,
+    }
+
+
 AGG_KEYS = ("n_all", "n_ref", "n_sale", "rev", "n_inh", "rev_inh", "rev_hv", "rev_rep", "n_ret")
 
 

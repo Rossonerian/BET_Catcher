@@ -124,3 +124,69 @@ def test_spa_static_route_security(client, tmp_path, monkeypatch):
     assert "TOP_SECRET_SIBLING" not in r_escape.text
     assert r_escape.text == "<html>SPA</html>"  # Safely falls back to index.html
 
+
+def test_declaration_match_preview_and_whitewash_guard(client):
+    # 1. Legitimate template has match preview without whitewashing warnings
+    tmpl = client.get("/api/merchants/M-SWEETCRUST/declaration-template").json()
+    tmpl.pop("demo_only", None)
+    d1 = client.post("/api/merchants/M-SWEETCRUST/declarations", json=tmpl).json()
+    assert "match_preview" in d1
+    prev = d1["match_preview"]
+    assert prev["matched_count"] > 0
+    assert prev["outside_declared_hours_count"] == 0
+    assert prev["one_time_customer_count"] == 0
+    assert prev["repeated_high_amount_count"] == 0
+    assert prev["warnings"] == []
+
+    # 2. Adversarial declaration attempting to cover overnight walk-in ₹9,999 transactions
+    # Fetch walk-in customer IDs and night transactions
+    import sqlite3
+    from verity import config
+    c = sqlite3.connect(config.DB_PATH)
+    c.row_factory = sqlite3.Row
+    night_rows = c.execute(
+        "SELECT customer_id FROM transactions WHERE merchant_id = 'M-SWEETCRUST' "
+        "AND (hour < 7 OR hour >= 21) AND amount >= 9000 AND NOT is_refund"
+    ).fetchall()
+    sus_custs = sorted({r[0] for r in night_rows})[:10]
+
+    adv_decl = {
+        "change_type": "CATERING",
+        "description": "Whitewashing attempt covering overnight payments",
+        "effective_from": "2026-10-18",
+        "params": {
+            "counterparties": sus_custs,
+            "ticket_min": 9000,
+            "ticket_max": 10000,
+            "hours_open": 0,
+            "hours_close": 24,
+            "beneficiary_ids": ["BEN-X1"],
+        },
+        "evidence": [],
+    }
+    d2 = client.post("/api/merchants/M-SWEETCRUST/declarations", json=adv_decl).json()
+    assert "match_preview" in d2
+    adv_prev = d2["match_preview"]
+    assert adv_prev["matched_count"] > 0
+    assert adv_prev["outside_declared_hours_count"] > 0
+    assert adv_prev["one_time_customer_count"] > 0
+    assert adv_prev["repeated_high_amount_count"] > 0
+    assert len(adv_prev["warnings"]) >= 3
+
+    # 3. Reviewing records the warnings in the audit trail
+    rev = client.post(f"/api/declarations/{d2['id']}/review", json={
+        "decision": "APPROVED", "reviewer": "analyst.sus", "note": "Approved despite warnings"
+    }).json()
+    case_res = client.get("/api/merchants/M-SWEETCRUST/case").json()
+    review_events = [e for e in case_res["audit"] if e["event_type"] == "DECLARATION_APPROVED"]
+    assert any("warnings" in e.get("detail", {}) for e in review_events)
+
+    # 4. Tie-breaking queue order: merchants with equal scores are ordered by unresolved signal count desc
+    merchants = client.get("/api/merchants").json()
+    # Check that list is sorted by -risk_score, then -unresolved_signal_count
+    for i in range(len(merchants) - 1):
+        m1, m2 = merchants[i], merchants[i + 1]
+        if m1["risk_score"] == m2["risk_score"]:
+            assert m1["unresolved_signal_count"] >= m2["unresolved_signal_count"]
+
+

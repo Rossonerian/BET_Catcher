@@ -363,6 +363,14 @@ export interface DeclarationIn {
   evidence: EvidenceItem[];
 }
 export type DeclarationTemplate = DeclarationIn & { demo_only: true };
+export interface DeclarationMatchPreview {
+  matched_count: number;
+  matched_amount: number;
+  outside_declared_hours_count: number;
+  one_time_customer_count: number;
+  repeated_high_amount_count: number;
+  warnings: string[];
+}
 export interface Declaration extends DeclarationIn {
   id: string;
   merchant_id: string;
@@ -372,6 +380,7 @@ export interface Declaration extends DeclarationIn {
   reviewed_at: string | null;
   reviewer: string | null;
   review_note: string | null;
+  match_preview?: DeclarationMatchPreview;
 }
 
 export interface CaseNote {
