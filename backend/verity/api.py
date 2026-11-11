@@ -393,9 +393,11 @@ if os.path.isdir(_DIST):
 
     @app.get("/{path:path}", include_in_schema=False)
     def spa(path: str):
-        if path.startswith("api/"):
+        if path == "api" or path.startswith("api/"):
             raise HTTPException(404, "Not found")
         f = os.path.join(_DIST, path)
-        if path and os.path.isfile(f) and os.path.realpath(f).startswith(os.path.realpath(_DIST)):
+        real_dist = os.path.realpath(_DIST)
+        real_f = os.path.realpath(f)
+        if path and os.path.isfile(f) and os.path.commonpath([real_dist, real_f]) == real_dist:
             return FileResponse(f)
         return FileResponse(os.path.join(_DIST, "index.html"))
