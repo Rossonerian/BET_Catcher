@@ -13,15 +13,14 @@ function makeColorFor(ids: { id: string; kind?: BeneficiaryKind }[]) {
     const k = kind ?? "unknown";
     const idx = seen.get(k) ?? 0;
     seen.set(k, idx + 1);
-    map.set(id, mix(KIND_COLOR[k], shades[Math.min(idx, shades.length - 1)]));
+    map.set(id, tint(KIND_COLOR[k], shades[Math.min(idx, shades.length - 1)]));
   }
   return (id: string, kind?: BeneficiaryKind) => map.get(id) ?? KIND_COLOR[kind ?? "unknown"];
 }
 
-function mix(hex: string, strength: number): string {
-  const n = parseInt(hex.slice(1), 16);
-  const ch = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((c) => Math.round(c * strength + 255 * (1 - strength)));
-  return `rgb(${ch.join(",")})`;
+/** Blends a theme colour toward the card surface, so a lighter shade stays on-theme in dark mode. */
+function tint(color: string, strength: number): string {
+  return strength >= 1 ? color : `color-mix(in srgb, ${color} ${Math.round(strength * 100)}%, var(--card))`;
 }
 
 function StackedBar({
