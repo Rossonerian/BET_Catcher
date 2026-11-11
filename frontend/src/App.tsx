@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import type { KeyboardEvent, ReactNode } from "react";
+import { Moon, Sun } from "lucide-react";
 import { api } from "./api";
 import type { MerchantSummary } from "./api";
 import { AuditTimeline } from "./components/AuditTimeline";
@@ -20,6 +21,8 @@ import { SignalsPanel } from "./components/SignalsPanel";
 import { ErrorBox, Loading } from "./components/common";
 import { useMerchantData } from "./useMerchantData";
 import type { Loadable } from "./useMerchantData";
+import { applyTheme, getInitialTheme } from "./theme";
+import type { Theme } from "./theme";
 
 const TABS = [
   { id: "identity", label: "Identity" },
@@ -51,6 +54,18 @@ export function App() {
   const [resetting, setResetting] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [dismissedEvent, setDismissedEvent] = useState<number | null>(null);
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+
+  useEffect(() => {
+    applyTheme(theme, false);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    const next: Theme = theme === "dark" ? "light" : "dark";
+    applyTheme(next);
+    setTheme(next);
+  };
+  const themeLabel = theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
 
   const data = useMerchantData(selectedId);
   const { reload } = data;
@@ -114,10 +129,18 @@ export function App() {
     <div className="app">
       <header className="topbar">
         <div className="brand">
+          <span className="brand-mark" aria-hidden="true" />
           <span className="brand-name">VERITY</span>
           <span className="brand-sub">Merchant behavioural intelligence · investigator console</span>
         </div>
         <div className="topbar-right">
+          <button type="button" className="btn btn-ghost theme-toggle" onClick={toggleTheme} aria-label={themeLabel} title={themeLabel}>
+            {theme === "dark" ? (
+              <Sun className="icon" aria-hidden="true" size={16} strokeWidth={1.5} />
+            ) : (
+              <Moon className="icon" aria-hidden="true" size={16} strokeWidth={1.5} />
+            )}
+          </button>
           <span className="synthetic-tag">Synthetic demo data</span>
           <label className="inline-field">
             <span>Acting analyst</span>

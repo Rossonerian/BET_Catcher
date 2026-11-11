@@ -19,11 +19,12 @@ interface Props {
   accounted: Set<string>;
 }
 
+/** CSS colours (theme tokens), so the diagram reads in both themes. */
 const SOURCE_COLOR: Record<string, string> = {
-  "SRC-RETAIL": "#52525b",
-  "SRC-DECLARED": "#71717a",
-  "SRC-HIGHVALUE": "#a1a1aa",
-  "SRC-OFFHOURS": "#b42318",
+  "SRC-RETAIL": "var(--ramp-2)",
+  "SRC-DECLARED": "var(--ramp-3)",
+  "SRC-HIGHVALUE": "var(--ramp-4)",
+  "SRC-OFFHOURS": "var(--negative-text)",
 };
 
 function band(x0: number, y0a: number, y0b: number, x1: number, y1a: number, y1b: number) {
@@ -76,13 +77,13 @@ export function FlowDiagram({ nodes, links, colorFor, accounted }: Props) {
         const y0 = srcPos[i].y;
         const y1 = inCursor;
         inCursor += h;
-        const c = SOURCE_COLOR[s.id] ?? "#737373";
+        const c = SOURCE_COLOR[s.id] ?? "var(--muted)";
         return (
           <g key={s.id}>
-            <path d={band(X_SRC + NODE_W, y0, y0 + h, X_MER, y1, y1 + h)} fill={c} opacity={0.28}>
+            <path d={band(X_SRC + NODE_W, y0, y0 + h, X_MER, y1, y1 + h)} style={{ fill: c }} opacity={0.28}>
               <title>{`${s.label} → ${merchant.label}: ${inrCompact(inVals[i])}`}</title>
             </path>
-            <rect x={X_SRC} y={y0} width={NODE_W} height={srcPos[i].h} fill={c} />
+            <rect x={X_SRC} y={y0} width={NODE_W} height={srcPos[i].h} style={{ fill: c }} />
             <text x={X_SRC - 8} y={y0 + srcPos[i].h / 2 - 3} textAnchor="end" className="flow-label">
               {s.label}
             </text>
@@ -101,7 +102,7 @@ export function FlowDiagram({ nodes, links, colorFor, accounted }: Props) {
         const isNew = !!b.new;
         return (
           <g key={b.id}>
-            <path d={band(X_MER + NODE_W, y0, y0 + h, X_BEN, y1, y1 + h)} fill={c} opacity={isNew ? 0.45 : 0.25}>
+            <path d={band(X_MER + NODE_W, y0, y0 + h, X_BEN, y1, y1 + h)} style={{ fill: c }} opacity={isNew ? 0.45 : 0.25}>
               <title>{`${merchant.label} → ${b.label}: ${inrCompact(outVals[i])}`}</title>
             </path>
             <rect
@@ -109,8 +110,7 @@ export function FlowDiagram({ nodes, links, colorFor, accounted }: Props) {
               y={y1}
               width={NODE_W}
               height={benPos[i].h}
-              fill={c}
-              stroke={isNew ? "#171717" : "none"}
+              style={{ fill: c, stroke: isNew ? "var(--text)" : "none" }}
               strokeWidth={isNew ? 1.5 : 0}
             />
             <text x={X_BEN + NODE_W + 8} y={y1 + benPos[i].h / 2 - 3} className="flow-label">
@@ -124,7 +124,7 @@ export function FlowDiagram({ nodes, links, colorFor, accounted }: Props) {
           </g>
         );
       })}
-      <rect x={X_MER} y={merY} width={NODE_W} height={merH} fill="#3f3f46" />
+      <rect x={X_MER} y={merY} width={NODE_W} height={merH} style={{ fill: "var(--ramp-1)" }} />
       <text x={X_SRC - 8} y={16} textAnchor="end" className="flow-col">
         Payment sources
       </text>

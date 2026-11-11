@@ -107,11 +107,11 @@ export const KIND_LABEL: Record<BeneficiaryKind, string> = {
   unknown: "Unknown owner",
 };
 
-/** Neutral ramp for beneficiary kinds; the individual account is the one toned negative (it is the concern). */
+/** Neutral ramp for beneficiary kinds (CSS variables, so both themes work); the individual account is the one toned negative (it is the concern). */
 export const KIND_COLOR: Record<BeneficiaryKind, string> = {
-  merchant_primary: "#3f3f46",
-  supplier: "#71717a",
-  professional_services: "#52525b",
-  individual: "#b42318",
-  unknown: "#a1a1aa",
+  merchant_primary: "var(--ramp-1)",
+  supplier: "var(--ramp-3)",
+  professional_services: "var(--ramp-2)",
+  individual: "var(--negative-text)",
+  unknown: "var(--ramp-4)",
 };
