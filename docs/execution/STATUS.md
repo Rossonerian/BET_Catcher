@@ -13,7 +13,7 @@ _Last updated: 2026-11-11 (integration `f98e759`, before WS-5 audit)._
 | WS-3 Frontend | Frontend subagent | `work/frontend/WS3-investigator-ui` | `881dbf9` | INTEGRATED | typecheck/build exit 0 (re-run by orchestrator); headless-Chrome walk-through by agent; screenshots reviewed |
 | WS-4 CI + docs | Orchestrator | `work/testing/WS4-ci-docs` | `f492272` | VERIFIED | `scripts/ci_local.sh` → CI OK |
 | WS-2 fix (review finding) | Orchestrator | `work/backend/WS2-fix-expected-profile` | `f98e759` | VERIFIED | e2e asserts declared lines + partial explanations |
-| WS-5 Independent audit | Audit subagent | `work/audit/WS5-final-audit` | – | IN_PROGRESS | – |
+| WS-5 Independent audit | Audit subagent | `work/audit/WS5-final-audit` | – | COMPLETE | `reports/FINAL_ENGINEERING_AUDIT.md` (19 tests, 9 adversarial probes, contract fixtures verified) |
 
 "PR" = reviewed `--no-ff` merge into `integration/demo-48h`; no GitHub remote exists (DEC-008), so there are no PR links.
 
