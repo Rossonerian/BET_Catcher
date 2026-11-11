@@ -413,7 +413,7 @@ if os.path.isdir(_DIST):
     @app.get("/{path:path}", include_in_schema=False)
     def spa(path: str):
         if path == "api" or path.startswith("api/"):
-            raise HTTPException(404, "Not found")
+            raise HTTPException(404, "Not Found")
         f = os.path.join(_DIST, path)
         real_dist = os.path.realpath(_DIST)
         real_f = os.path.realpath(f)
