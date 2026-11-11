@@ -41,7 +41,7 @@ export function DriftPanel({
     {
       key: "peer",
       label: `Peer median (n=${timeseries.peer_cohort_size})`,
-      color: "#6b7280",
+      color: "#737373",
       dashed: true,
       values: peer,
     },
@@ -50,7 +50,7 @@ export function DriftPanel({
     series.push({
       key: "residual",
       label: "Residual (after approved declaration)",
-      color: "#c2410c",
+      color: "#3f3f46",
       values: residual,
     });
   }
@@ -152,7 +152,7 @@ export function DriftPanel({
                       <td>{zScore(f.z_residual)}</td>
                     </>
                   )}
-                  <td>
+                  <td className="cell-text">
                     {f.z === null ? (
                       <Badge>Not assessable</Badge>
                     ) : anomalous ? (

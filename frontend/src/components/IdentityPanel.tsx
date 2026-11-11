@@ -1,3 +1,4 @@
+import { Check, X } from "lucide-react";
 import type { Assessment } from "../api";
 import { Section } from "./common";
 
@@ -5,11 +6,13 @@ function Consistency({ value }: { value: boolean | null }) {
   if (value === null) return <span className="check-na">Not assessable</span>;
   return value ? (
     <span className="check-ok" aria-label="Consistent">
-      ✓ Consistent
+      <Check className="icon" aria-hidden="true" size={16} strokeWidth={1.5} />
+      Consistent
     </span>
   ) : (
     <span className="check-bad" aria-label="Inconsistent">
-      ✗ Inconsistent
+      <X className="icon" aria-hidden="true" size={16} strokeWidth={1.5} />
+      Inconsistent
     </span>
   );
 }

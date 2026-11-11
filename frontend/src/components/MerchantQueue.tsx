@@ -48,7 +48,7 @@ export function MerchantQueue({ merchants, error, selectedId, onSelect, onReset,
                 <div className="qi-meta">
                   <span title="Model confidence">conf {pct(m.model_confidence, 0)}</span>
                   <span title="Data completeness">data {pct(m.data_completeness, 0)}</span>
-                  <span title="Unresolved or partially explained signals" className={m.unresolved_signal_count ? "qi-unres" : ""}>
+                  <span title="Unresolved or partially explained signals" className="qi-count">
                     {m.unresolved_signal_count} unresolved
                   </span>
                 </div>
