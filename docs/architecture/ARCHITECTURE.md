@@ -72,7 +72,9 @@ sequenceDiagram
 ```
 
 ## Deployment
-Single process: `uvicorn verity.api:app` serves `/api/*` and the built UI from `frontend/dist`. SQLite file at `VERITY_DB` (default `backend/verity.db`), seeded on first start and on `POST /api/demo/reset`.
+**Local (reference):** single process — `uvicorn verity.api:app` serves `/api/*` and the built UI from `frontend/dist`. SQLite file at `VERITY_DB` (default `backend/verity.db`), seeded on first start and on `POST /api/demo/reset`. Run one worker only: the fitted inline scorer is process-local (R-09).
+
+**Hosted (Vercel, DEC-015):** https://bet-catcher.vercel.app. Vercel builds `frontend/` and serves `frontend/dist` statically; `/api/*` is rewritten to the Python function `api/index.py`, which imports the same `verity.api:app`, sets `VERITY_DB=/tmp/verity.db` and seeds at import (serverless may skip ASGI lifespan). State is per instance and lost on cold start (R-10). Deploys: `vercel deploy --prod`, or `.github/workflows/deploy.yml` after green CI on `main` when the `VERCEL_TOKEN` secret is set.
 
 ## Demo → production path (Proposed, not built)
 | Demo | Production |

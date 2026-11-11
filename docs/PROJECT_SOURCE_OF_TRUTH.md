@@ -94,6 +94,7 @@ flowchart LR
 - **Residual analysis**: transactions matched to an *approved* declaration are marked *accounted for* and excluded from behaviour features; this is how a legitimate change becomes "explained" while unrelated anomalies remain.
 - **Scorer interface** (`scoring.py`): `RobustBaselineScorer` (median/MAD). Production path (Proposed, not demonstrated): export to ONNX and compile with IBM zDLC for the Telum on-chip accelerator so in-transaction scoring runs next to core-banking data.
 - **Error format**: `{"detail": "<message>"}` with HTTP 400/404/409/422.
+- **Hosting**: local single process is the reference (NFR-001). A public demo runs on Vercel (static UI + `api/index.py` Python function, SQLite in `/tmp`, re-seeded per cold instance) — see DEC-015, R-10.
 
 ### Why IBM Z / LinuxONE (pitch layer — Proposed, not demonstrated)
 | VERITY need | IBM Z capability |
@@ -141,3 +142,4 @@ Live board: [`docs/execution/STATUS.md`](execution/STATUS.md).
 | 2 | 2026-11-11 | Contract: `expected.declared_lines` / `declared_beneficiaries`; audit `newly_partially_explained` (raised by WS-3 review) |
 | 3 | 2026-11-11 | WS-5 audit completed; AUD-001 (declaration match preview & whitewash warnings), AUD-002 (commonpath static containment), AUD-003 (frontend smoke test) |
 | 4 | 2026-11-11 | Post-audit sync: AUD-004 (404 casing), AUD-005 (dynamic SPA route), AUD-006 (Vitest component tests); GitHub remote + Actions CI verified (DEC-013, R-05 closed); P2-02 accepted as R-09 |
+| 5 | 2026-11-11 | Hosted demo on Vercel (DEC-015, R-10); WS-8 deploy workflow gated on `VERCEL_TOKEN` + entrypoint regression test; docs refreshed (architecture, testing, runbook, README, workstreams) |

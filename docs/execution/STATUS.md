@@ -21,6 +21,8 @@ _Last updated: 2026-11-11 (post-audit sync; all audit findings closed or accepte
 | Fix AUD-005 SPA route | Implementer | _(branch deleted)_ | `1ccdf9b` | VERIFIED | Dynamic SPA route; missing `dist/` handled |
 | Fix AUD-006 Frontend component tests | Worker | `work/fix/AUD-006-frontend-vitest` | `d95086d` | VERIFIED | `npm test` → Vitest, 6 files / 11 tests (format + SignalsPanel, RecommendationPanel, MerchantHeader, NetworkPanel, App); closes P2-01 |
 | WS-6 Post-audit doc sync | Orchestrator | `work/docs/WS6-post-audit-sync` | `b5aedff` | VERIFIED | DEC-013, R-05 closed, R-09, audit addendum |
+| WS-7 Vercel hosting | Orchestrator | `work/deploy/WS-7-vercel` | `ac0856a` | VERIFIED | https://bet-catcher.vercel.app — health, UI, SPA deep link, declaration→approval 90→65, audit trail checked over HTTPS |
+| WS-8 Repo refresh + deploy CI | Orchestrator + Orca worker | `work/docs/WS8-repo-refresh`, `work/ci/WS8-vercel-deploy` | _pending_ | IN PROGRESS | Docs refresh; `deploy.yml` gated on `VERCEL_TOKEN`; `test_vercel_entry.py` |
 
 "PR" = reviewed `--no-ff` merge into `integration/demo-48h`, pushed to `origin` (`github.com/Rossonerian/BET_Catcher`, DEC-013); GitHub Actions `ci` runs on every push.
 
