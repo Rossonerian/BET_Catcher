@@ -87,3 +87,40 @@ def test_audit_is_append_only(client):
     import sqlite3
     with pytest.raises(sqlite3.DatabaseError):
         api._state["conn"].execute("DELETE FROM audit_events")
+
+
+def test_spa_static_route_security(client, tmp_path, monkeypatch):
+    import os
+    from verity import api
+
+    # 1. /api exact path returns 404 JSON
+    r_api = client.get("/api")
+    assert r_api.status_code == 404
+    assert r_api.json()["detail"] == "Not found"
+
+    # 2. Path traversal attempts do not leak backend files
+    r_trav = client.get("/..%2f..%2fbackend%2fverity%2fapi.py")
+    assert "FastAPI(title=" not in r_trav.text
+
+    # 3. Sibling directory prefix check (dist2 must not be accessible via dist)
+    dist_dir = tmp_path / "mock_dist"
+    dist_dir.mkdir()
+    (dist_dir / "index.html").write_text("<html>SPA</html>")
+    (dist_dir / "app.js").write_text("console.log('app');")
+
+    sibling_dir = tmp_path / "mock_dist2"
+    sibling_dir.mkdir()
+    (sibling_dir / "secret.txt").write_text("TOP_SECRET_SIBLING")
+
+    monkeypatch.setattr(api, "_DIST", str(dist_dir))
+
+    # Request to valid file in dist succeeds
+    r_valid = client.get("/app.js")
+    assert r_valid.status_code == 200
+    assert r_valid.text == "console.log('app');"
+
+    # Request trying to escape into sibling directory dist2 fails containment check
+    r_escape = client.get("/../mock_dist2/secret.txt")
+    assert "TOP_SECRET_SIBLING" not in r_escape.text
+    assert r_escape.text == "<html>SPA</html>"  # Safely falls back to index.html
+
