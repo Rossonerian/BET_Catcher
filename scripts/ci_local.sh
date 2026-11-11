@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Local mirror of .github/workflows/ci.yml (no GitHub remote exists yet; see DEC-008).
+# Local mirror of .github/workflows/ci.yml (GitHub Actions is the CI of record; see DEC-013).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 echo "== backend: byte-compile"; python3 -m compileall -q "$ROOT/backend/verity"
