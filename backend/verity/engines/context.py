@@ -12,8 +12,11 @@ from . import behaviour as B
 from . import features as F
 
 
-def _pct(x: float | None) -> str:
-    return "n/a" if x is None else f"{x * 100:+.1f}%"
+def _pct(x: float | None, feature: str | None = None) -> str:
+    if x is None:
+        return "n/a"
+    unit = " pp" if feature and F.FEATURE_META[feature]["kind"] == "share" else "%"
+    return f"{x * 100:+.1f}{unit}"
 
 
 def behaviour_signals(md: F.MerchantData, beh: dict, peer: dict) -> list[dict]:
@@ -105,10 +108,10 @@ def hypotheses(md: F.MerchantData, beh: dict, peer: dict, identity: dict, flow: 
         hyps.append({
             "id": "H-SEASONAL", "kind": "LEGITIMATE", "title": "Seasonal or festival demand shared with peers",
             "status": status, "explains": [s["id"] for s in in_line],
-            "supporting": [f"{F.FEATURE_META[s['feature']]['label']}: merchant {_pct(pf[s['feature']]['merchant_change'])} vs "
-                           f"peer median {_pct(pf[s['feature']]['peer_median_change'])} (n={pf[s['feature']]['n']})" for s in in_line],
-            "contradicting": [f"{F.FEATURE_META[s['feature']]['label']}: merchant {_pct(pf[s['feature']]['merchant_change'])} exceeds "
-                              f"peer range (upper bound {_pct(pf[s['feature']]['peer_upper_bound'])})" for s in exceeds],
+            "supporting": [f"{F.FEATURE_META[s['feature']]['label']}: merchant {_pct(pf[s['feature']]['merchant_change'], s['feature'])} vs "
+                           f"peer median {_pct(pf[s['feature']]['peer_median_change'], s['feature'])} (n={pf[s['feature']]['n']})" for s in in_line],
+            "contradicting": [f"{F.FEATURE_META[s['feature']]['label']}: merchant {_pct(pf[s['feature']]['merchant_change'], s['feature'])} exceeds "
+                              f"peer range (upper bound {_pct(pf[s['feature']]['peer_upper_bound'], s['feature'])})" for s in exceeds],
             "gaps": [] if peer["status"] == "OK" else [peer["caveat"]],
         })
 
