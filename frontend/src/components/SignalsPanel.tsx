@@ -1,6 +1,6 @@
 import type { Assessment, Hypothesis, HypothesisStatus, Resolution, Signal } from "../api";
 import { featureValue, humanize, zScore } from "../format";
-import { Badge, List, PositionBadge, ResolutionBadge, Section, SeverityBadge } from "./common";
+import { Badge, List, MetaLine, PositionBadge, ResolutionBadge, Section, SeverityBadge } from "./common";
 
 const GROUPS: { key: Resolution; hint: string }[] = [
   { key: "UNRESOLVED", hint: "No legitimate explanation accepted yet — needs analyst attention." },
@@ -20,14 +20,10 @@ function SignalCard({ s, unit, hypTitle }: { s: Signal; unit: string; hypTitle: 
   const st = s.statistic;
   const fmt = (v: number | null | undefined) => featureValue(v ?? null, unit);
   return (
-    <article className={`signal-card res-border-${s.resolution.toLowerCase().replace(/_/g, "-")}`}>
+    <article className="signal-card">
       <header className="signal-head">
         <h5>{s.title}</h5>
-        <div className="badges">
-          <SeverityBadge severity={s.severity} />
-          <Badge>{humanize(s.theme)}</Badge>
-          {s.peer_position && <PositionBadge position={s.peer_position} />}
-        </div>
+        <MetaLine items={[<SeverityBadge key="sev" severity={s.severity} />, humanize(s.theme), s.peer_position && <PositionBadge key="pos" position={s.peer_position} />]} />
       </header>
       <p>{s.description}</p>
       {(st.baseline !== null || st.observed !== null) && (

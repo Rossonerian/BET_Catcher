@@ -2,6 +2,7 @@ import { useState } from "react";
 import { api } from "../api";
 import type { Declaration } from "../api";
 import { dateTime, humanize, inr } from "../format";
+import { AlertTriangle } from "lucide-react";
 import { Badge, ErrorBox, Section } from "./common";
 
 const STATUS_TONE = { PENDING: "info", APPROVED: "good", REJECTED: "warn" } as const;
@@ -30,14 +31,19 @@ function ReviewBox({ decl, actor, onReviewed }: { decl: Declaration; actor: stri
     <div className="review-box">
       <h6>Analyst review</h6>
       {decl.match_preview && (
-        <div className="preview-box" style={{ background: "#f8fafc", border: "1px solid #e2e8f0", padding: "8px 12px", borderRadius: 4, marginBottom: 12 }}>
-          <div style={{ fontSize: 13, fontWeight: 600 }}>
+        <div className="preview-box">
+          <div className="preview-title">
             Match preview: {decl.match_preview.matched_count} transaction(s) matched ({inr(decl.match_preview.matched_amount)})
           </div>
           {decl.match_preview.warnings && decl.match_preview.warnings.length > 0 && (
-            <div style={{ marginTop: 6, color: "#b91c1c", fontSize: 12 }}>
+            <div className="preview-warnings">
               {decl.match_preview.warnings.map((w, i) => (
-                <div key={i}>⚠️ <strong>Whitewash Warning:</strong> {w}</div>
+                <div key={i} className="preview-warning">
+                  <AlertTriangle className="icon" aria-hidden="true" size={16} strokeWidth={1.5} />
+                  <span>
+                    <strong>Whitewash Warning:</strong> {w}
+                  </span>
+                </div>
               ))}
             </div>
           )}

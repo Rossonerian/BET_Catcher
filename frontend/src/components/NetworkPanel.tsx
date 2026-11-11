@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { Lead, NetworkEdge, NetworkGraph, NetworkNode } from "../api";
-import { KIND_COLOR, KIND_LABEL, TIER_COLOR, TIER_LABEL, humanize, inr, pct } from "../format";
+import { KIND_COLOR, KIND_LABEL, TIER_LABEL, humanize, inr, pct } from "../format";
 import { Badge, Section } from "./common";
 
 const W = 960;
@@ -89,7 +89,7 @@ function NetworkGraphSvg({ graph, onSelect, selected }: { graph: NetworkGraph; o
             <path
               d={d}
               fill="none"
-              stroke={lead ? "#c2410c" : "#9ca3af"}
+              stroke={lead ? "#1f4e99" : "#a3a3a3"}
               strokeWidth={1.5 + Math.min(e.share_recent, 0.5) * 16}
               strokeOpacity={lead ? 0.75 : 0.55}
               strokeDasharray={e.new_in_recent ? undefined : "5 4"}
@@ -110,7 +110,7 @@ function NetworkGraphSvg({ graph, onSelect, selected }: { graph: NetworkGraph; o
               height={18}
               rx={3}
               fill={KIND_COLOR[b.kind]}
-              stroke="#111827"
+              stroke="#171717"
               strokeWidth={risky ? 2 : 0}
               strokeDasharray={b.kind === "unknown" ? "3 2" : undefined}
             />
@@ -132,7 +132,7 @@ function NetworkGraphSvg({ graph, onSelect, selected }: { graph: NetworkGraph; o
         return (
           <g key={m.id}>
             <title>{`${m.label} — ${TIER_LABEL[m.tier]}${m.anomalous_features.length ? `; anomalous: ${m.anomalous_features.join(", ")}` : ""}`}</title>
-            <circle cx={p.x} cy={p.y} r={isFocus ? 16 : 10} fill={TIER_COLOR[m.tier]} stroke="#111827" strokeWidth={isFocus ? 2.5 : 1} />
+            <circle cx={p.x} cy={p.y} r={isFocus ? 16 : 10} fill={isFocus ? "#171717" : "#ffffff"} stroke="#171717" strokeWidth={isFocus ? 2 : 1.5} />
             <text
               x={isFocus ? p.x : p.x + 16}
               y={isFocus ? p.y + 34 : p.y + 4}
@@ -218,9 +218,9 @@ export function NetworkPanel({ graph }: { graph: NetworkGraph }) {
       <div className="net-legend">
         <span className="legend-item">
           <svg width="14" height="14" aria-hidden="true">
-            <circle cx="7" cy="7" r="6" fill={TIER_COLOR.ESCALATE_INVESTIGATION} />
+            <circle cx="7" cy="7" r="5.5" fill="#ffffff" stroke="#171717" strokeWidth="1.5" />
           </svg>
-          Merchant (colour = tier)
+          Merchant
         </span>
         {(Object.keys(KIND_LABEL) as (keyof typeof KIND_LABEL)[]).map((k) => (
           <span className="legend-item" key={k}>
