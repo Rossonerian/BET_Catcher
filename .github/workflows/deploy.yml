@@ -1,0 +1,55 @@
+name: deploy
+on:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-prod
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: team_yZBGyZiIWYWivJ3RzQHJRfdU
+      VERCEL_PROJECT_ID: prj_DAjqDYa3cKYgAHUYZZ0UUM5QNaZV
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - name: Checkout ci-validated commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Skip when VERCEL_TOKEN is missing
+        id: gate
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::notice::VERCEL_TOKEN secret is not set; skipping Vercel deploy. Add it under Settings > Secrets and variables > Actions to enable production deploys."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node
+        if: steps.gate.outputs.skip == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Deploy to Vercel (production)
+        if: steps.gate.outputs.skip == 'false'
+        run: npx --yes vercel@latest deploy --prod --yes --token "$VERCEL_TOKEN"
+
+      - name: Smoke test /api/health
+        if: steps.gate.outputs.skip == 'false'
+        run: |
+          body=$(curl -fsS --retry 5 --retry-delay 5 https://bet-catcher.vercel.app/api/health)
+          echo "$body"
+          echo "$body" | grep -q '"status":"ok"' || { echo "::error::health check did not return status ok"; exit 1; }
