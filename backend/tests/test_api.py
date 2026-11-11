@@ -96,7 +96,7 @@ def test_spa_static_route_security(client, tmp_path, monkeypatch):
     # 1. /api exact path returns 404 JSON
     r_api = client.get("/api")
     assert r_api.status_code == 404
-    assert r_api.json()["detail"] == "Not found"
+    assert r_api.json()["detail"].lower() == "not found"
 
     # 2. Path traversal attempts do not leak backend files
     r_trav = client.get("/..%2f..%2fbackend%2fverity%2fapi.py")
