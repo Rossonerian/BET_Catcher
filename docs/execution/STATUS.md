@@ -2,7 +2,7 @@
 
 Requirements: [../PROJECT_SOURCE_OF_TRUTH.md](../PROJECT_SOURCE_OF_TRUTH.md). Evidence-based: a task is `VERIFIED` only when a test or recorded check shows it.
 
-_Last updated: 2026-11-11 (post-audit fixes merged into integration; 21 backend tests + frontend test passed)._
+_Last updated: 2026-11-11 (post-audit sync; all audit findings closed or accepted; GitHub Actions CI green)._
 
 ## Workstreams
 | WS | Owner | Branch | Merge commit | Status | Evidence |
@@ -17,8 +17,12 @@ _Last updated: 2026-11-11 (post-audit fixes merged into integration; 21 backend 
 | Fix AUD-002 Static route path | Implementer | `work/fix/AUD-002-static-route-path` | `ce05cb9` | VERIFIED | `os.path.commonpath` containment + `/api` 404; regression test passed |
 | Fix AUD-001 Declaration guard | Implementer | `work/fix/AUD-001-declaration-guard` | `6b2921e` | VERIFIED | Match preview, whitewash detection warnings & audit tracking; regression test passed |
 | Fix AUD-003 Frontend test | Implementer | `work/fix/AUD-003-frontend-smoke-test` | `7e2a952` | VERIFIED | `npm test` runs `frontend/tests/format.test.mjs`; CI updated and passing |
+| Fix AUD-004 404 casing | Implementer | _(branch deleted)_ | `1f80c49` | VERIFIED | `test_api.py` assertion normalised |
+| Fix AUD-005 SPA route | Implementer | _(branch deleted)_ | `1ccdf9b` | VERIFIED | Dynamic SPA route; missing `dist/` handled |
+| Fix AUD-006 Frontend component tests | Worker | `work/fix/AUD-006-frontend-vitest` | `d95086d` | VERIFIED | `npm test` → Vitest, 6 files / 11 tests (format + SignalsPanel, RecommendationPanel, MerchantHeader, NetworkPanel, App); closes P2-01 |
+| WS-6 Post-audit doc sync | Orchestrator | `work/docs/WS6-post-audit-sync` | `b5aedff` | VERIFIED | DEC-013, R-05 closed, R-09, audit addendum |
 
-"PR" = reviewed `--no-ff` merge into `integration/demo-48h`; no GitHub remote exists (DEC-008), so there are no PR links.
+"PR" = reviewed `--no-ff` merge into `integration/demo-48h`, pushed to `origin` (`github.com/Rossonerian/BET_Catcher`, DEC-013); GitHub Actions `ci` runs on every push.
 
 ## Requirements
 | ID | Status | Evidence |
@@ -35,14 +39,14 @@ _Last updated: 2026-11-11 (post-audit fixes merged into integration; 21 backend 
 | FR-010 case/audit | VERIFIED | audit sequence asserted; append-only trigger test; whitewash warnings recorded in audit |
 | FR-011 lifecycle | VERIFIED | `test_new_merchant_low_confidence_and_capped` |
 | FR-012 inline | VERIFIED | `test_inline_score` (laptop latency only) |
-| FR-013 UI | VERIFIED | build + `format.test.mjs` + agent browser run; manual runbook pass confirmed |
+| FR-013 UI | VERIFIED | build + Vitest component tests (AUD-006) + agent browser run; manual runbook pass confirmed |
 | FR-014 reset | VERIFIED | e2e reset assertion |
 
 ## Open items / risks
-- No LinuxONE/Telum run (R-01) — platform fit is argued, not measured.
-- No GitHub remote; CI workflow is untested on GitHub (R-05). `scripts/ci_local.sh` mirrors it locally.
+- No LinuxONE/Telum run (R-01) — platform fit is argued, not measured. Needs team hardware access.
+- Inline scorer is process-local (R-09, accepted for single-worker demo).
 - R-08 Declaration whitewashing mitigated by AUD-001 preview and forensic audit warnings.
 
 ## Next actions
-1. Merge `integration/demo-48h` into `main` with `--no-ff`.
-2. Team: rehearse the runbook on the presenting laptop; if LinuxONE access exists, run the same server there.
+1. Team: rehearse the runbook on the presenting laptop.
+2. If LinuxONE access exists, run `scripts/run_demo.sh` there and record measured latency (closes R-01).

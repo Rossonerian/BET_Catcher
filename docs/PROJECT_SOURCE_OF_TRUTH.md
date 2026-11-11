@@ -140,3 +140,4 @@ Live board: [`docs/execution/STATUS.md`](execution/STATUS.md).
 | 1 | 2026-11-11 | Initial SoT from the three supplied documents |
 | 2 | 2026-11-11 | Contract: `expected.declared_lines` / `declared_beneficiaries`; audit `newly_partially_explained` (raised by WS-3 review) |
 | 3 | 2026-11-11 | WS-5 audit completed; AUD-001 (declaration match preview & whitewash warnings), AUD-002 (commonpath static containment), AUD-003 (frontend smoke test) |
+| 4 | 2026-11-11 | Post-audit sync: AUD-004 (404 casing), AUD-005 (dynamic SPA route), AUD-006 (Vitest component tests); GitHub remote + Actions CI verified (DEC-013, R-05 closed); P2-02 accepted as R-09 |

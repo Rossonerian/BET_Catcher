@@ -513,3 +513,17 @@ The VERITY codebase exhibits exceptional engineering discipline, structural inte
 *Signed,*
 **Independent Engineering Auditor**
 *Branch: `work/audit/WS5-final-audit`*
+
+---
+
+## Addendum — Finding Disposition (post-audit, 2026-11-11)
+
+| Finding | Disposition | Evidence |
+|---|---|---|
+| `FINDING-P2-01` | **Closed** by AUD-006 | Vitest + Testing Library component tests run via `npm test` in CI |
+| `FINDING-P2-02` | **Accepted** (R-09) | Single uvicorn worker in `scripts/run_demo.sh`; constraint documented at `backend/verity/api.py` `_state` |
+| `FINDING-P3-01` | **Closed** by AUD-002 | `api.py` returns JSON 404 for `path == "api"` or `api/*` |
+| `FINDING-P3-02` | **Closed** by AUD-002 (DEC-011) | `os.path.commonpath` containment replaces `startswith` |
+| `FINDING-P3-03` | **Closed** (R-05, DEC-013) | GitHub Actions `ci` passed on `main` and `integration/demo-48h` |
+
+Line references in the findings above (e.g. `api.py:399`) refer to the audited revision and have since moved.
