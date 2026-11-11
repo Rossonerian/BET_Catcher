@@ -20,6 +20,9 @@ CHANGE_TYPES = ("CATERING", "BULK_ORDERS", "EXTENDED_HOURS", "NEW_SUPPLIER", "NE
 CASE_STATUSES = ("OPEN", "AWAITING_MERCHANT", "UNDER_REVIEW", "ENHANCED_MONITORING", "ESCALATED", "CLOSED_NO_ACTION")
 AUTO_CASE_MIN_TIER = "REQUEST_CLARIFICATION"
 
+# Process-local state (DEC-004, R-09): connection and fitted inline scorer live in this
+# worker's memory. Run a single uvicorn worker (scripts/run_demo.sh does); multi-worker
+# deployments would need a shared scorer cache keyed by db.data_version().
 _state: dict = {"conn": None, "scorer": None, "scorer_version": None}
 
 
