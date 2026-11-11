@@ -102,15 +102,17 @@ def _record_reassessment(mid: str, before: dict, actor: str, reason: str) -> dic
     conn().commit()
     after = _assessment(mid)
     case = _open_case(mid)
+    prev = {b["id"]: b["resolution"] for b in before["signals"]}
+
+    def changed(res: str) -> list[str]:
+        return sorted(s["id"] for s in after["signals"] if s["resolution"] == res and prev.get(s["id"]) != res)
+
     db.audit(conn(), mid, actor, "ASSESSMENT_UPDATED", {
         "reason": reason,
         "from_score": before["risk"]["score"], "to_score": after["risk"]["score"],
         "from_tier": before["risk"]["tier"], "to_tier": after["risk"]["tier"],
-        "newly_explained": sorted(
-            s["id"] for s in after["signals"]
-            if s["resolution"] != "UNRESOLVED"
-            and next((b for b in before["signals"] if b["id"] == s["id"]), {}).get("resolution") != s["resolution"]
-        ),
+        "newly_explained": changed("EXPLAINED"),
+        "newly_partially_explained": changed("PARTIALLY_EXPLAINED"),
     }, case_id=case["id"] if case else None)
     conn().commit()
     return after

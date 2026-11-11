@@ -33,7 +33,10 @@ def test_full_demo_journey(client):  # noqa: F811
     assert res["SIG-FLOW-NEW-BEN-X1"] == "UNRESOLVED"
     assert after["risk"]["score"] < before["risk"]["score"]
     assert after["risk"]["tier"] == "ANALYST_REVIEW"
-    assert after["identity"]["expected"]["ticket_range"] == before["identity"]["expected"]["ticket_range"]
+    exp = after["identity"]["expected"]
+    assert exp["ticket_range"] == before["identity"]["expected"]["ticket_range"]  # retail baseline preserved
+    assert exp["updated_by"] == [did] and exp["declared_lines"][0]["declaration_id"] == did
+    assert "BEN-X3" in exp["declared_beneficiaries"]
 
     # analyst records a proportionate decision
     case = client.get("/api/merchants/M-SWEETCRUST/case").json()["case"]
@@ -47,6 +50,9 @@ def test_full_demo_journey(client):  # noqa: F811
         assert e in events
     upd = next(e for e in client.get("/api/merchants/M-SWEETCRUST/case").json()["audit"] if e["event_type"] == "ASSESSMENT_UPDATED")
     assert upd["detail"]["from_tier"] == "ESCALATE_INVESTIGATION" and upd["detail"]["to_tier"] == "ANALYST_REVIEW"
+    assert "SIG-BEH-daytime_avg_ticket" in upd["detail"]["newly_explained"]
+    assert "SIG-FLOW-NONPRIMARY" in upd["detail"]["newly_partially_explained"]
+    assert "SIG-FLOW-NONPRIMARY" not in upd["detail"]["newly_explained"]
 
     # reset restores the seeded state
     client.post("/api/demo/reset")

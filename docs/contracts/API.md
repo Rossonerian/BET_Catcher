@@ -40,7 +40,7 @@ type BeneficiaryKind = "merchant_primary" | "supplier" | "professional_services"
 | POST | `/score/transaction` | `{merchant_id, amount, timestamp, customer_id}` | `InlineScore` | `score_transaction.json` |
 | POST | `/demo/reset` | – | `{status, data_version, transactions, settlements, records}` | `demo_reset.json` |
 
-Approving or rejecting a declaration re-runs the assessment and appends an `ASSESSMENT_UPDATED` audit event (`detail.from_score/to_score/from_tier/to_tier/newly_explained`). Pending declarations never change the assessment.
+Approving or rejecting a declaration re-runs the assessment and appends an `ASSESSMENT_UPDATED` audit event (`detail.from_score/to_score/from_tier/to_tier/newly_explained/newly_partially_explained`). Pending declarations never change the assessment.
 
 ## Types
 
@@ -56,8 +56,16 @@ interface MerchantProfile {
   declared_open: number | null; declared_close: number | null; declared_ticket_min: number | null; declared_ticket_max: number | null;
   primary_beneficiary: string; onboarded_on: string;
   declared: { category: string; description: string; channel: string; hours: [number|null, number|null]; ticket_range: [number|null, number|null] };
-  expected: { hours: [number|null, number|null]; ticket_range: [number|null, number|null]; updated_by: string[] };
+  expected: ExpectedProfile;
   declarations: Declaration[];
+}
+
+// Approved declarations update the expected profile: hours (EXTENDED_HOURS), additional business lines (CATERING/BULK_ORDERS)
+// and declared payees. The original retail ticket range is preserved (previous baseline kept, FR-008).
+interface ExpectedProfile {
+  hours: [number|null, number|null]; ticket_range: [number|null, number|null]; updated_by: string[];
+  declared_lines: { declaration_id: string; change_type: ChangeType; ticket_range: [number|null, number|null]; hours: [number|null, number|null]; counterparties: string[] }[];
+  declared_beneficiaries: string[];
 }
 
 interface Assessment {
@@ -74,7 +82,7 @@ interface Assessment {
   };
   recommendation: { tier: Tier; actions: string[]; requires_human_approval: boolean; not_permitted: string[]; rationale: string[] };
   identity: {
-    declared: {...}; expected: {...}; scored: false;
+    declared: {...}; expected: ExpectedProfile; scored: false;
     checks: { id: string; check: string; declared: string | null; observed: string | null; consistent: boolean | null; note: string }[];
   };
   behaviour: {
