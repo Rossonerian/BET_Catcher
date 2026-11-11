@@ -23,6 +23,7 @@ _Last updated: 2026-11-11 (WS-8 repo refresh; hosted on Vercel; all audit findin
 | WS-6 Post-audit doc sync | Orchestrator | `work/docs/WS6-post-audit-sync` | `b5aedff` | VERIFIED | DEC-013, R-05 closed, R-09, audit addendum |
 | WS-7 Vercel hosting | Orchestrator | `work/deploy/WS-7-vercel` | `ac0856a` | VERIFIED | https://bet-catcher.vercel.app — health, UI, SPA deep link, declaration→approval 90→65, audit trail checked over HTTPS |
 | WS-8 Repo refresh + deploy CI | Orchestrator + Orca worker | `work/docs/WS8-repo-refresh`, `work/ci/WS8-vercel-deploy` | `4c88aac`, `2820277` | VERIFIED | Docs refresh; `deploy.yml` gated on `VERCEL_TOKEN`; `test_vercel_entry.py` |
+| WS-9 Unslop UI pass | Orchestrator + Orca worker | `work/frontend/WS9-unslop-ui` | `a504636`, `c12f2ea` | VERIFIED | unslop audit (11 signs) + direction; graphite ramp, bundled IBM Plex, lucide icons, TierLadder signature; 11 Vitest tests, build, browser check (no console errors, no external requests) |
 
 "PR" = reviewed `--no-ff` merge into `integration/demo-48h`, pushed to `origin` (`github.com/Rossonerian/BET_Catcher`, DEC-013); GitHub Actions `ci` runs on every push.
 
