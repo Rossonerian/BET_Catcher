@@ -19,8 +19,8 @@ _Last updated: 2026-11-11 (post-audit sync; all audit findings closed or accepte
 | Fix AUD-003 Frontend test | Implementer | `work/fix/AUD-003-frontend-smoke-test` | `7e2a952` | VERIFIED | `npm test` runs `frontend/tests/format.test.mjs`; CI updated and passing |
 | Fix AUD-004 404 casing | Implementer | _(branch deleted)_ | `1f80c49` | VERIFIED | `test_api.py` assertion normalised |
 | Fix AUD-005 SPA route | Implementer | _(branch deleted)_ | `1ccdf9b` | VERIFIED | Dynamic SPA route; missing `dist/` handled |
-| Fix AUD-006 Frontend component tests | Worker | `work/fix/AUD-006-frontend-vitest` | _pending_ | IN PROGRESS | Vitest + Testing Library (closes P2-01) |
-| WS-6 Post-audit doc sync | Orchestrator | `work/docs/WS6-post-audit-sync` | _pending_ | IN PROGRESS | DEC-013, R-05 closed, R-09, audit addendum |
+| Fix AUD-006 Frontend component tests | Worker | `work/fix/AUD-006-frontend-vitest` | `d95086d` | VERIFIED | `npm test` → Vitest, 6 files / 11 tests (format + SignalsPanel, RecommendationPanel, MerchantHeader, NetworkPanel, App); closes P2-01 |
+| WS-6 Post-audit doc sync | Orchestrator | `work/docs/WS6-post-audit-sync` | `b5aedff` | VERIFIED | DEC-013, R-05 closed, R-09, audit addendum |
 
 "PR" = reviewed `--no-ff` merge into `integration/demo-48h`, pushed to `origin` (`github.com/Rossonerian/BET_Catcher`, DEC-013); GitHub Actions `ci` runs on every push.
 
@@ -39,7 +39,7 @@ _Last updated: 2026-11-11 (post-audit sync; all audit findings closed or accepte
 | FR-010 case/audit | VERIFIED | audit sequence asserted; append-only trigger test; whitewash warnings recorded in audit |
 | FR-011 lifecycle | VERIFIED | `test_new_merchant_low_confidence_and_capped` |
 | FR-012 inline | VERIFIED | `test_inline_score` (laptop latency only) |
-| FR-013 UI | VERIFIED | build + `format.test.mjs` + agent browser run; manual runbook pass confirmed |
+| FR-013 UI | VERIFIED | build + Vitest component tests (AUD-006) + agent browser run; manual runbook pass confirmed |
 | FR-014 reset | VERIFIED | e2e reset assertion |
 
 ## Open items / risks
