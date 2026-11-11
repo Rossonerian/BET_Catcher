@@ -85,14 +85,21 @@ def expected_profile(md: MerchantData) -> dict:
     prof = {
         "open": m["declared_open"], "close": m["declared_close"],
         "ticket_min": m["declared_ticket_min"], "ticket_max": m["declared_ticket_max"],
-        "accounted_beneficiaries": [], "sources": [],
+        "accounted_beneficiaries": [], "sources": [], "declared_lines": [],
     }
     for d in md.approved:
         p = d["params"]
         if d["change_type"] == "EXTENDED_HOURS" and p.get("new_close") is not None:
             prof["close"] = int(p["new_close"])
-            prof["sources"].append(d["id"])
+        if d["change_type"] in ("CATERING", "BULK_ORDERS"):
+            prof["declared_lines"].append({
+                "declaration_id": d["id"], "change_type": d["change_type"],
+                "ticket_range": [p.get("ticket_min"), p.get("ticket_max")],
+                "hours": [p.get("hours_open"), p.get("hours_close")],
+                "counterparties": p.get("counterparties", []),
+            })
         prof["accounted_beneficiaries"].extend(p.get("beneficiary_ids", []))
+        prof["sources"].append(d["id"])
     return prof
 
 

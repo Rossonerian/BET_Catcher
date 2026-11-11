@@ -70,10 +70,20 @@ export interface DeclaredProfile {
   hours: Range;
   ticket_range: Range;
 }
+export interface DeclaredLine {
+  declaration_id: string;
+  change_type: string;
+  ticket_range: Range;
+  hours: Range;
+  counterparties: string[];
+}
+
 export interface ExpectedProfile {
   hours: Range;
   ticket_range: Range;
   updated_by: string[];
+  declared_lines?: DeclaredLine[];
+  declared_beneficiaries?: string[];
 }
 
 export interface MerchantProfile {

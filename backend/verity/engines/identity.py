@@ -35,7 +35,7 @@ def run(md: F.MerchantData, behaviour: dict) -> dict:
     else:
         ns = rec["night_share"]
         declared = f"{prof['open']:02d}:00–{prof['close']:02d}:00"
-        if prof["sources"]:
+        if prof["close"] != m["declared_close"]:
             declared += f" (updated by {', '.join(prof['sources'])})"
         checks.append({"id": "ID-HOURS", "check": "Operating hours", "declared": declared,
                        "observed": f"{ns * 100:.1f}% of payments outside declared hours",
@@ -68,7 +68,8 @@ def run(md: F.MerchantData, behaviour: dict) -> dict:
                      "hours": [m["declared_open"], m["declared_close"]],
                      "ticket_range": [m["declared_ticket_min"], m["declared_ticket_max"]]},
         "expected": {"hours": [prof["open"], prof["close"]], "ticket_range": [prof["ticket_min"], prof["ticket_max"]],
-                     "updated_by": prof["sources"]},
+                     "updated_by": prof["sources"],
+                     "declared_lines": prof["declared_lines"], "declared_beneficiaries": prof["accounted_beneficiaries"]},
         "checks": checks,
         "scored": False,
     }

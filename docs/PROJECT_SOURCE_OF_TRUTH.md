@@ -138,3 +138,4 @@ Live board: [`docs/execution/STATUS.md`](execution/STATUS.md).
 | Rev | Date | Change |
 |---|---|---|
 | 1 | 2026-11-11 | Initial SoT from the three supplied documents |
+| 2 | 2026-11-11 | Contract: `expected.declared_lines` / `declared_beneficiaries`; audit `newly_partially_explained` (raised by WS-3 review) |

@@ -20,6 +20,7 @@ export function ReassessmentBanner({
 }) {
   const d = event.detail;
   const explained = Array.isArray(d.newly_explained) ? (d.newly_explained as string[]) : [];
+  const partial = Array.isArray(d.newly_partially_explained) ? (d.newly_partially_explained as string[]) : [];
   const titles = new Map((assessment?.signals ?? []).map((s) => [s.id, s.title]));
   const stillOpen = (assessment?.signals ?? []).filter((s) => s.resolution !== "EXPLAINED");
   return (
@@ -39,6 +40,11 @@ export function ReassessmentBanner({
           <strong>Newly explained:</strong>{" "}
           {explained.length ? explained.map((id) => titles.get(id) ?? id).join("; ") : "none"}
         </span>
+        {partial.length > 0 && (
+          <span>
+            <strong>Newly partially explained:</strong> {partial.map((id) => titles.get(id) ?? id).join("; ")}
+          </span>
+        )}
         {assessment && (
           <span>
             <strong>Still unresolved or partial:</strong> {stillOpen.length} signal(s)

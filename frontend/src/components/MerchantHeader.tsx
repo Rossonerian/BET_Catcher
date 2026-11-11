@@ -40,6 +40,15 @@ export function MerchantHeader({ profile, assessment }: { profile: MerchantProfi
                 {expected.updated_by.length > 0 && (
                   <span className="muted"> · updated by {expected.updated_by.join(", ")}</span>
                 )}
+                {(expected.declared_lines ?? []).map((l) => (
+                  <div key={l.declaration_id}>
+                    + {humanize(l.change_type)} line: {ticketRange(l.ticket_range)}, {hoursRange(l.hours)},{" "}
+                    {l.counterparties.length} declared client(s)
+                  </div>
+                ))}
+                {(expected.declared_beneficiaries ?? []).length > 0 && (
+                  <div>+ declared payee(s): {(expected.declared_beneficiaries ?? []).join(", ")}</div>
+                )}
               </dd>
             </>
           )}
