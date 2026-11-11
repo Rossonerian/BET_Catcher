@@ -22,6 +22,8 @@ cd backend && python3 -m uvicorn verity.api:app --port 8000
 ```
 The SQLite database (`backend/verity.db`, override with `VERITY_DB`) is seeded on first start. `POST /api/demo/reset` restores the seeded state.
 
+**Hosted demo:** https://bet-catcher.vercel.app — static UI plus the FastAPI app as a Vercel Python function (`api/index.py`, `vercel.json`). SQLite lives in `/tmp` and each cold instance re-seeds the synthetic data, so state is ephemeral: use **Reset demo** before presenting (DEC-015). Deploy with `vercel deploy --prod`.
+
 ## Development
 ```bash
 pip install -r backend/requirements-dev.txt

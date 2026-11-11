@@ -49,4 +49,5 @@ _Last updated: 2026-11-11 (post-audit sync; all audit findings closed or accepte
 
 ## Next actions
 1. Team: rehearse the runbook on the presenting laptop.
-2. If LinuxONE access exists, run `scripts/run_demo.sh` there and record measured latency (closes R-01).
+2. Hosted demo: https://bet-catcher.vercel.app (Vercel, DEC-015); click Reset demo before presenting.
+3. If LinuxONE access exists, run `scripts/run_demo.sh` there and record measured latency (closes R-01).
