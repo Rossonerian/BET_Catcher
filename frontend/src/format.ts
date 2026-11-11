@@ -78,6 +78,7 @@ export function dateTime(ts: string): string {
 }
 
 export function humanize(s: string): string {
+  if (!s) return "—";
   const t = s.replace(/_/g, " ").toLowerCase();
   return t.charAt(0).toUpperCase() + t.slice(1);
 }
