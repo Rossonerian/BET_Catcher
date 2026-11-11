@@ -9,6 +9,8 @@ scripts/run_demo.sh          # http://127.0.0.1:8000
 Before every run, press **Reset demo** in the UI (or `curl -XPOST localhost:8000/api/demo/reset`).
 Stop with `Ctrl+C`. Nothing runs in the background.
 
+**Hosted alternative:** https://bet-catcher.vercel.app (no install). Press **Reset demo** first. Hosted state is per serverless instance (R-10); if numbers jump back mid-demo, a cold instance re-seeded — press Reset demo and repeat the beat, or switch to the local server.
+
 ## Storyline
 
 | Time | Beat | Do | Say / show | Observable success |
@@ -43,3 +45,5 @@ Swagger UI is at `/docs`.
 | Port in use | `PORT=8010 scripts/run_demo.sh` |
 | Blank page | `frontend/dist` missing → `cd frontend && npm ci && npm run build` |
 | Numbers differ from this runbook | Not reset since last run → Reset demo |
+| Hosted site slow on first click | Cold start re-seeds (~2–5 s); open it a minute before presenting |
+| Hosted declaration disappears | New serverless instance (R-10) → Reset demo and redo, or use `scripts/run_demo.sh` |
