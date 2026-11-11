@@ -407,16 +407,23 @@ def demo_reset():
 
 # ---------------------------------------------------------------- static UI
 _DIST = os.environ.get("VERITY_UI_DIST", os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist"))
-if os.path.isdir(_DIST):
+if os.path.isdir(os.path.join(_DIST, "assets")):
     app.mount("/assets", StaticFiles(directory=os.path.join(_DIST, "assets")), name="assets")
 
-    @app.get("/{path:path}", include_in_schema=False)
-    def spa(path: str):
-        if path == "api" or path.startswith("api/"):
-            raise HTTPException(404, "Not Found")
-        f = os.path.join(_DIST, path)
-        real_dist = os.path.realpath(_DIST)
-        real_f = os.path.realpath(f)
-        if path and os.path.isfile(f) and os.path.commonpath([real_dist, real_f]) == real_dist:
-            return FileResponse(f)
-        return FileResponse(os.path.join(_DIST, "index.html"))
+
+@app.get("/{path:path}", include_in_schema=False)
+def spa(path: str):
+    if path == "api" or path.startswith("api/"):
+        raise HTTPException(404, "Not Found")
+    dist = globals().get("_DIST", _DIST)
+    if not os.path.isdir(dist):
+        raise HTTPException(404, "Not Found")
+    f = os.path.join(dist, path)
+    real_dist = os.path.realpath(dist)
+    real_f = os.path.realpath(f)
+    if path and os.path.isfile(f) and os.path.commonpath([real_dist, real_f]) == real_dist:
+        return FileResponse(f)
+    idx = os.path.join(dist, "index.html")
+    if os.path.isfile(idx):
+        return FileResponse(idx)
+    raise HTTPException(404, "Not Found")
