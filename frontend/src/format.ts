@@ -99,20 +99,6 @@ export const TIER_LABEL: Record<Tier, string> = {
   ESCALATE_INVESTIGATION: "Escalate to investigation",
 };
 
-/** CSS class suffix for tier colouring (see styles.css .tier-*). */
-export function tierClass(t: Tier): string {
-  return `tier-${t.toLowerCase().replace(/_/g, "-")}`;
-}
-
-/** Tier colours for SVG fills (kept in sync with styles.css variables). */
-export const TIER_COLOR: Record<Tier, string> = {
-  PASSIVE_MONITORING: "#2e7d4f",
-  ENHANCED_MONITORING: "#3567b5",
-  REQUEST_CLARIFICATION: "#a46a00",
-  ANALYST_REVIEW: "#c2410c",
-  ESCALATE_INVESTIGATION: "#b42318",
-};
-
 export const KIND_LABEL: Record<BeneficiaryKind, string> = {
   merchant_primary: "Merchant primary a/c",
   supplier: "Supplier",
@@ -121,10 +107,11 @@ export const KIND_LABEL: Record<BeneficiaryKind, string> = {
   unknown: "Unknown owner",
 };
 
+/** Neutral ramp for beneficiary kinds; the individual account is the one toned negative (it is the concern). */
 export const KIND_COLOR: Record<BeneficiaryKind, string> = {
-  merchant_primary: "#2e7d4f",
-  supplier: "#3567b5",
-  professional_services: "#6b5ca5",
+  merchant_primary: "#3f3f46",
+  supplier: "#71717a",
+  professional_services: "#52525b",
   individual: "#b42318",
-  unknown: "#7a6a00",
+  unknown: "#a1a1aa",
 };

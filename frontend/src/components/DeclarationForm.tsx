@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import { CHANGE_TYPES, EVIDENCE_KINDS, api } from "../api";
 import type { ChangeType, DeclarationIn, EvidenceKind } from "../api";
 import { humanize } from "../format";
+import { X } from "lucide-react";
 import { ErrorBox, Section } from "./common";
 
 interface EvidenceRow {
@@ -243,7 +244,7 @@ export function DeclarationForm({
                     aria-label={`Remove evidence ${i + 1}`}
                     onClick={() => setForm((f) => ({ ...f, evidence: f.evidence.filter((_, j) => j !== i) }))}
                   >
-                    ✕
+                    <X className="icon" aria-hidden="true" size={16} strokeWidth={1.5} />
                   </button>
                 </div>
               ))}

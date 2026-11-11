@@ -1,9 +1,10 @@
 import type { ReactNode } from "react";
 import type { PeerPosition, Resolution, Severity, Tier } from "../api";
-import { TIER_LABEL, humanize, tierClass } from "../format";
+import { humanize } from "../format";
+import { TierLadder } from "./TierLadder";
 
 export function TierBadge({ tier, label }: { tier: Tier; label?: string }) {
-  return <span className={`badge ${tierClass(tier)}`}>{label ?? TIER_LABEL[tier]}</span>;
+  return <TierLadder tier={tier} label={label} />;
 }
 
 const RESOLUTION_LABEL: Record<Resolution, string> = {
@@ -17,7 +18,7 @@ export function ResolutionBadge({ resolution }: { resolution: Resolution }) {
 }
 
 export function SeverityBadge({ severity }: { severity: Severity }) {
-  return <span className={`badge sev-${severity}`}>{humanize(severity)} severity</span>;
+  return <span className={`sev sev-${severity}`}>{humanize(severity)} severity</span>;
 }
 
 const POSITION_LABEL: Record<PeerPosition, string> = {
@@ -30,8 +31,24 @@ export function PositionBadge({ position }: { position: PeerPosition }) {
   return <span className={`badge pos-${position.toLowerCase().replace(/_/g, "-")}`}>{POSITION_LABEL[position]}</span>;
 }
 
+/** Quiet status: a small dot in the tone colour and plain text. */
 export function Badge({ children, tone = "neutral" }: { children: ReactNode; tone?: string }) {
   return <span className={`badge tone-${tone}`}>{children}</span>;
+}
+
+/** Meta line of quiet text items separated by middots; empty items are skipped. */
+export function MetaLine({ items }: { items: (ReactNode | null | false | undefined)[] }) {
+  const shown = items.filter((i) => i !== null && i !== undefined && i !== false);
+  return (
+    <p className="meta-line">
+      {shown.map((item, i) => (
+        <span key={i}>
+          {i > 0 && <span className="meta-sep" aria-hidden="true"> · </span>}
+          {item}
+        </span>
+      ))}
+    </p>
+  );
 }
 
 export function ErrorBox({ error, onRetry }: { error: string; onRetry?: () => void }) {

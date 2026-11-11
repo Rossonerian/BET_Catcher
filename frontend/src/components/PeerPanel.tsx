@@ -74,7 +74,7 @@ export function PeerPanel({ assessment }: { assessment: Assessment }) {
                     <td className="col-range">
                       <RangeBar f={f} />
                     </td>
-                    <td>
+                    <td className="cell-text">
                       <PositionBadge position={f.position} />
                       <div className="muted small">n={f.n}</div>
                     </td>

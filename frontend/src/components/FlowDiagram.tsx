@@ -20,9 +20,9 @@ interface Props {
 }
 
 const SOURCE_COLOR: Record<string, string> = {
-  "SRC-RETAIL": "#2e7d4f",
-  "SRC-DECLARED": "#3567b5",
-  "SRC-HIGHVALUE": "#a46a00",
+  "SRC-RETAIL": "#52525b",
+  "SRC-DECLARED": "#71717a",
+  "SRC-HIGHVALUE": "#a1a1aa",
   "SRC-OFFHOURS": "#b42318",
 };
 
@@ -76,7 +76,7 @@ export function FlowDiagram({ nodes, links, colorFor, accounted }: Props) {
         const y0 = srcPos[i].y;
         const y1 = inCursor;
         inCursor += h;
-        const c = SOURCE_COLOR[s.id] ?? "#6b7280";
+        const c = SOURCE_COLOR[s.id] ?? "#737373";
         return (
           <g key={s.id}>
             <path d={band(X_SRC + NODE_W, y0, y0 + h, X_MER, y1, y1 + h)} fill={c} opacity={0.28}>
@@ -110,7 +110,7 @@ export function FlowDiagram({ nodes, links, colorFor, accounted }: Props) {
               width={NODE_W}
               height={benPos[i].h}
               fill={c}
-              stroke={isNew ? "#111827" : "none"}
+              stroke={isNew ? "#171717" : "none"}
               strokeWidth={isNew ? 1.5 : 0}
             />
             <text x={X_BEN + NODE_W + 8} y={y1 + benPos[i].h / 2 - 3} className="flow-label">
@@ -124,7 +124,7 @@ export function FlowDiagram({ nodes, links, colorFor, accounted }: Props) {
           </g>
         );
       })}
-      <rect x={X_MER} y={merY} width={NODE_W} height={merH} fill="#1f2937" />
+      <rect x={X_MER} y={merY} width={NODE_W} height={merH} fill="#3f3f46" />
       <text x={X_SRC - 8} y={16} textAnchor="end" className="flow-col">
         Payment sources
       </text>
