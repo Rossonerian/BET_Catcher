@@ -73,11 +73,24 @@ def _assessment(mid: str) -> dict:
     return a
 
 
-def _decl_row(r) -> dict:
+def _decl_row(r, md=None) -> dict:
     d = dict(r)
     d["params"] = json.loads(d["params"])
     d["evidence"] = json.loads(d["evidence"])
     d["effective_from"] = seed.day_to_date(d.pop("effective_from_day")).isoformat()
+    if md is None:
+        try:
+            internals = _result().get("internals", {})
+            if d.get("merchant_id") in internals:
+                md = internals[d["merchant_id"]].get("md")
+        except Exception:
+            pass
+    if md is not None:
+        try:
+            from .engines import features
+            d["match_preview"] = features.preview_declaration_match(md, d)
+        except Exception:
+            pass
     return d
 
 
@@ -141,7 +154,7 @@ def list_merchants():
                 "unresolved_signal_count": sum(1 for s in a["signals"] if s["resolution"] != "EXPLAINED"),
                 "case_status": case["status"] if case else None,
             })
-        out.sort(key=lambda x: (-x["risk_score"], x["name"]))
+        out.sort(key=lambda x: (-x["risk_score"], -x["unresolved_signal_count"], x["name"]))
         return out
 
 
@@ -286,10 +299,16 @@ def review_declaration(did: str, body: ReviewIn):
             raise HTTPException(409, f"Declaration {did} is already {row['status']}")
         mid = row["merchant_id"]
         before = _assessment(mid)
+        d_dict = _decl_row(row)
+        preview = d_dict.get("match_preview", {})
+        warnings = preview.get("warnings", [])
         c.execute("UPDATE declarations SET status = ?, reviewed_at = ?, reviewer = ?, review_note = ? WHERE id = ?",
                   (body.decision, db.now_iso(), body.reviewer, body.note, did))
         case = _open_case(mid)
-        db.audit(c, mid, body.reviewer, f"DECLARATION_{body.decision}", {"declaration_id": did, "note": body.note},
+        audit_payload = {"declaration_id": did, "note": body.note, "match_preview": preview}
+        if warnings:
+            audit_payload["warnings"] = warnings
+        db.audit(c, mid, body.reviewer, f"DECLARATION_{body.decision}", audit_payload,
                  case_id=case["id"] if case else None)
         _record_reassessment(mid, before, "system", f"Declaration {did} {body.decision.lower()}")
         return _decl_row(c.execute("SELECT * FROM declarations WHERE id = ?", (did,)).fetchone())
