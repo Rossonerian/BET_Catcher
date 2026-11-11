@@ -1,24 +1,31 @@
 /* Visual pass follows unslop by Damir Sokolovsky (@heydamir), CC BY 4.0 — github.com/heydamir/unslop */
-/* VERITY investigator console — light graphite case-file theme. No external requests: fonts are bundled. */
+/* VERITY investigator console — Ink & Jade, dark and light. No external requests: fonts are bundled. */
 
-:root {
-  /* surfaces: graphite ramp */
-  --page: #fafafa;
+/* Light ("cool paper") is the default; dark ("ink") is set by data-theme on <html>, see theme.ts. */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* surfaces: depth comes from surface steps and hairlines, not shadows */
+  --page: #f6f7f9;
+  --sidebar: #ffffff;
   --card: #ffffff;
-  --raised: #f4f4f5;
-  --hairline: rgba(23, 23, 23, 0.08);
-  --control-line: rgba(23, 23, 23, 0.16);
+  --raised: #eef1f4;
+  --hairline: rgba(16, 21, 28, 0.08);
+  --control-line: rgba(16, 21, 28, 0.16);
 
   /* text roles */
-  --text: #171717;
-  --text-2: #525252;
-  --muted: #737373;
+  --text: #10151c;
+  --text-2: #4a5463;
+  --muted: #5f6b7e; /* nudged from #667085: failed 4.5:1 on the raised surface */
 
-  /* accent: the brand ink, for primary action, selection, active tab, drift line and focus */
-  --accent: #1f4e99;
-  --accent-hover: #173d79;
-  --accent-line: rgba(31, 78, 153, 0.3);
-  --focus-ring: 0 0 0 2px #fff, 0 0 0 4px rgba(31, 78, 153, 0.5);
+  /* accent: jade, only on the moments listed in the Ink & Jade brief */
+  --accent: #0e7c66;
+  --accent-hover: #0b6655;
+  --accent-soft: rgba(14, 124, 102, 0.1);
+  --accent-line: rgba(14, 124, 102, 0.35);
+  --on-accent: #ffffff;
+  --focus-ring: 0 0 0 2px var(--page), 0 0 0 4px rgba(14, 124, 102, 0.55);
 
   /* semantic: dots, icons and text only */
   --positive: #16a34a;
@@ -27,10 +34,73 @@
   --warning: #b45309;
 
   /* meters and the tier ladder */
-  --meter-track: #d4d4d8;
-  --meter-fill: #3f3f46;
-  --ladder-empty: #d4d4d8;
+  --meter-track: #dde2e8;
+  --meter-fill: #4a5463;
+  --ladder-empty: #dde2e8;
+  --ladder-on: #10151c;
+  --ladder-alert: #c2362f;
 
+  /* charts */
+  --chart-grid: rgba(16, 21, 28, 0.07);
+  --chart-axis: #667085;
+  --chart-band: rgba(14, 124, 102, 0.06);
+  --chart-peer: #98a2b3;
+
+  /* neutral ramp for beneficiary kinds and flow sources; strongest to lightest */
+  --ramp-1: #2f3744;
+  --ramp-2: #4f5868;
+  --ramp-3: #6b7486;
+  --ramp-4: #8a93a3;
+
+  --shadow-float: 0 8px 24px rgba(16, 21, 28, 0.08);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --page: #0b0d14;
+  --sidebar: #07080d;
+  --card: #11141c;
+  --raised: #1a1e28;
+  --hairline: rgba(238, 240, 245, 0.08);
+  --control-line: rgba(238, 240, 245, 0.16);
+
+  --text: #eef0f5;
+  --text-2: #a3a9b8;
+  --muted: #818a9e; /* nudged from #7a8296: failed 4.5:1 on the raised surface */
+
+  --accent: #3ddbb0;
+  --accent-hover: #62e6c2;
+  --accent-soft: rgba(61, 219, 176, 0.12);
+  --accent-line: rgba(61, 219, 176, 0.4);
+  --on-accent: #04201a;
+  --focus-ring: 0 0 0 2px var(--page), 0 0 0 4px rgba(61, 219, 176, 0.6);
+
+  --positive: #4cc38a;
+  --negative: #e5484d;
+  --negative-text: #ff7a7f;
+  --warning: #f0a43a;
+
+  --meter-track: #252a36;
+  --meter-fill: #a3a9b8;
+  --ladder-empty: #2a3040;
+  --ladder-on: #eef0f5;
+  --ladder-alert: #ff6369;
+
+  --chart-grid: rgba(238, 240, 245, 0.06);
+  --chart-axis: #7a8296;
+  --chart-band: rgba(61, 219, 176, 0.06);
+  --chart-peer: #5b6475;
+
+  --ramp-1: #d3d8e2;
+  --ramp-2: #a3a9b8;
+  --ramp-3: #7a8296;
+  --ramp-4: #626b7f;
+
+  --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+:root {
   /* radius by size: tags 6, controls 8, cards 12, panels 14 */
   --r-tag: 6px;
   --r-control: 8px;
@@ -117,6 +187,14 @@ code,
   align-items: baseline;
   gap: 12px;
 }
+.brand-mark {
+  align-self: center;
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--accent);
+}
 .brand-name {
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -131,6 +209,29 @@ code,
   display: flex;
   align-items: center;
   gap: 16px;
+}
+.theme-toggle {
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-control);
+  color: var(--text-2);
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+.theme-toggle:hover:not(:disabled) {
+  color: var(--text);
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle {
+    transition: none;
+  }
 }
 .topbar .inline-field span {
   color: var(--text-2);
@@ -152,7 +253,7 @@ code,
 
 /* ---------- queue ---------- */
 .queue {
-  background: var(--card);
+  background: var(--sidebar);
   border-right: 1px solid var(--hairline);
   padding: 16px;
   overflow-y: auto;
@@ -191,6 +292,7 @@ code,
   gap: 8px;
 }
 .queue-item {
+  position: relative;
   width: 100%;
   text-align: left;
   background: var(--card);
@@ -210,6 +312,17 @@ code,
 .queue-item.selected {
   background: var(--raised);
   border-color: var(--accent-line);
+}
+/* 2px jade bar on the left edge; inset past the corner radius so it stays inside the rounded card */
+.queue-item.selected::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 2px;
+  border-radius: 0 2px 2px 0;
+  background: var(--accent);
 }
 .qi-top {
   display: flex;
@@ -267,10 +380,10 @@ code,
   background: var(--ladder-empty);
 }
 .tier-seg.on {
-  background: var(--text);
+  background: var(--ladder-on);
 }
 .tier-seg.alert {
-  background: var(--negative-text);
+  background: var(--ladder-alert);
 }
 .tier-label {
   color: var(--text);
@@ -323,7 +436,7 @@ code,
 }
 .tone-info::before,
 .pos-below-peers::before {
-  background: var(--accent);
+  background: var(--text-2);
 }
 .res-unresolved,
 .res-partially-explained,
@@ -406,7 +519,7 @@ code,
 .btn-primary {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 .btn-primary:hover:not(:disabled) {
   background: var(--accent-hover);
@@ -635,7 +748,7 @@ textarea {
   font-weight: 500;
   line-height: 44px;
   font-variant-numeric: tabular-nums;
-  color: var(--text);
+  color: var(--accent);
 }
 .score-max {
   font-size: 16px;
@@ -939,13 +1052,13 @@ h6 {
   display: inline-block;
 }
 .recent-swatch {
-  background: rgba(23, 23, 23, 0.04);
+  background: var(--chart-band);
   border: 1px solid var(--hairline);
 }
 .legend-line {
   width: 24px;
   height: 0;
-  border-top: 2px solid #737373;
+  border-top: 2px solid var(--muted);
   display: inline-block;
 }
 .lead-line {
@@ -960,25 +1073,25 @@ h6 {
   display: block;
 }
 .chart-svg .grid {
-  stroke: var(--hairline);
+  stroke: var(--chart-grid);
 }
 .axis-text {
   font-family: var(--font-mono);
   font-size: 12px;
-  fill: var(--muted);
+  fill: var(--chart-axis);
 }
 .recent-shade {
-  fill: rgba(23, 23, 23, 0.04);
+  fill: var(--chart-band);
 }
 .marker-line {
-  stroke: #525252;
+  stroke: var(--text-2);
   stroke-dasharray: 3 3;
 }
 .marker-text {
   fill: var(--text-2);
 }
 .hover-line {
-  stroke: #a3a3a3;
+  stroke: var(--chart-axis);
 }
 .chart-readout {
   display: flex;
@@ -1023,14 +1136,14 @@ h6 {
   position: absolute;
   top: 6px;
   height: 4px;
-  background: #e4e4e7;
+  background: var(--meter-track);
   border-radius: 2px;
 }
 .rb-zero {
   position: absolute;
   top: 0;
   height: 16px;
-  border-left: 1px dotted #a3a3a3;
+  border-left: 1px dotted var(--muted);
 }
 .rb-median {
   position: absolute;
@@ -1118,14 +1231,20 @@ h6 {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--text);
   font-family: var(--font-mono);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
-  border-right: 1px solid #fff;
+  border-right: 1px solid var(--card);
+}
+/* share label sits on a card-coloured chip so it reads on any segment tone */
+.sbar-seg span {
+  background: var(--card);
+  border-radius: 4px;
+  padding: 0 4px;
 }
 .sbar-new {
-  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.6);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--card) 60%, transparent);
 }
 .flow-svg,
 .net-svg {
@@ -1305,7 +1424,7 @@ h6 {
 }
 .ev-refs code,
 .indicator-list code {
-  background: rgba(23, 23, 23, 0.05);
+  background: color-mix(in srgb, var(--text) 5%, transparent);
   padding: 0 4px;
   border-radius: 4px;
 }
@@ -1467,11 +1586,11 @@ h6 {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #a3a3a3;
+  background: var(--chart-peer);
   border: 2px solid var(--card);
 }
 .tl-assessment_updated::before {
-  background: var(--accent);
+  background: var(--text-2);
 }
 .tl-declaration_approved::before {
   background: var(--positive);

@@ -37,11 +37,11 @@ export function DriftPanel({
   const residualDiffers = residual.some((r, i) => r !== null && value[i] !== null && Math.abs(r - (value[i] as number)) > 1e-9);
 
   const series: ChartSeries[] = [
-    { key: "merchant", label: `${assessment.merchant_name} (daily)`, color: "#1f4e99", values: value },
+    { key: "merchant", label: `${assessment.merchant_name} (daily)`, color: "var(--accent)", area: true, values: value },
     {
       key: "peer",
       label: `Peer median (n=${timeseries.peer_cohort_size})`,
-      color: "#737373",
+      color: "var(--chart-peer)",
       dashed: true,
       values: peer,
     },
@@ -50,7 +50,7 @@ export function DriftPanel({
     series.push({
       key: "residual",
       label: "Residual (after approved declaration)",
-      color: "#3f3f46",
+      color: "var(--text-2)",
       values: residual,
     });
   }
